@@ -1,0 +1,50 @@
+#!/bin/sh
+# Render CLI wrapper script
+# This script should be installed as /usr/local/bin/render or similar
+
+# Find the render_cli.py script
+# First, try the current directory
+if [ -f "./render_cli.py" ]; then
+    SCRIPT_PATH="./render_cli.py"
+# Then try the script's own directory
+elif [ -f "$(dirname "$0")/render_cli.py" ]; then
+    SCRIPT_PATH="$(dirname "$0")/render_cli.py"
+# Then try common locations
+elif [ -f "/usr/local/bin/render_cli.py" ]; then
+    SCRIPT_PATH="/usr/local/bin/render_cli.py"
+elif [ -f "/opt/render-cli/render_cli.py" ]; then
+    SCRIPT_PATH="/opt/render-cli/render_cli.py"
+else
+    echo "Error: render_cli.py not found"
+    echo "Please ensure render_cli.py is in your PATH or current directory"
+    exit 1
+fi
+
+# Check for Python
+if ! command -v python3 >/dev/null 2>&1; then
+    echo "Error: python3 is not installed or not in PATH"
+    echo "Please install Python 3 to use the Render CLI"
+    exit 1
+fi
+
+# Check for API key
+if [ -z "$RENDER_API_KEY" ]; then
+    echo "Error: RENDER_API_KEY environment variable is not set"
+    echo ""
+    echo "To set your Render API key:"
+    echo "1. Go to https://dashboard.render.com/account/api-keys"
+    echo "2. Create a new API key or use an existing one"
+    echo "3. Set it as an environment variable:"
+    echo ""
+    echo "   export RENDER_API_KEY='your-api-key-here'"
+    echo ""
+    echo "Or add it to your shell profile (~/.bashrc, ~/.zshrc, etc.):"
+    echo "   echo \"export RENDER_API_KEY='your-key'\" >> ~/.bashrc"
+    echo ""
+    echo "For one-time use, you can also run:"
+    echo "   RENDER_API_KEY='your-key' render [command]"
+    exit 1
+fi
+
+# Run the Python script
+exec python3 "$SCRIPT_PATH" "$@"
