@@ -1,13 +1,20 @@
 #!/usr/bin/env python3
 """
-Render CLI alternative - Python script to interact with Render API
+Render CLI - Python script to interact with Render API
 """
 
 import os
 import sys
 import json
-import requests
 from datetime import datetime
+
+# Check for requests dependency
+try:
+    import requests
+except ImportError:
+    print("Error: 'requests' library is not installed")
+    print("Install it using: pip3 install requests")
+    sys.exit(1)
 
 class RenderCLI:
     def __init__(self):
