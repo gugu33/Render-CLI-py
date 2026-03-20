@@ -1,89 +1,36 @@
-# Render CLI (Python)
+# Render CLI for Minis/iSH
 
-A Python-based command-line interface for managing Render services via the Render API.
-
-## Features
-
-- List all Render services
-- View detailed service information
-- Check service deployments
-- Lightweight and dependency-free (only `requests` library)
-- Works on any system with Python 3
+A Python-based Render CLI that works in the Minis/iSH environment (Alpine Linux on iOS).
 
 ## Installation
 
-### Option 1: Quick Install (Linux/macOS)
+After cloning the repository, run the setup script to complete installation:
 
 ```bash
 # Clone the repository
 git clone https://github.com/gugu33/Render-CLI-py.git
 cd Render-CLI-py
 
-# Make the wrapper script executable
-chmod +x render
-
-# Install Python dependencies
-pip3 install requests
-
-# Add to PATH (optional)
-sudo cp render /usr/local/bin/
+# Run the setup script
+sh setup_render_cli.sh
 ```
 
-### Option 2: Manual Setup
+The setup script will:
+1. Check and install Python dependencies
+2. Install the wrapper script to `/usr/local/bin/render`
+3. Guide you through API key setup
+
+## Setup
+
+Your `RENDER_API_KEY` environment variable needs to be set. You can verify this by running:
 
 ```bash
-# Download the Python script
-curl -O https://raw.githubusercontent.com/gugu33/Render-CLI-py/main/render_cli.py
-
-# Download the wrapper script
-curl -O https://raw.githubusercontent.com/gugu33/Render-CLI-py/main/render
-chmod +x render
-
-# Install Python dependencies
-pip3 install requests
+echo $RENDER_API_KEY | head -c 10
 ```
 
-### Option 3: Using as Python Module
+If not set, the setup script will guide you through the process.
 
-```bash
-# Just download the Python script
-curl -O https://raw.githubusercontent.com/gugu33/Render-CLI-py/main/render_cli.py
-
-# Run directly
-python3 render_cli.py services list
-```
-
-## Configuration
-
-### 1. Get Render API Key
-1. Go to [Render Dashboard → Account → API Keys](https://dashboard.render.com/account/api-keys)
-2. Create a new API key or use an existing one
-
-### 2. Set Environment Variable
-
-**Linux/macOS:**
-```bash
-export RENDER_API_KEY="your-api-key-here"
-```
-
-**Windows (Command Prompt):**
-```cmd
-set RENDER_API_KEY=your-api-key-here
-```
-
-**Windows (PowerShell):**
-```powershell
-$env:RENDER_API_KEY="your-api-key-here"
-```
-
-**Permanent setup (add to shell profile):**
-```bash
-echo 'export RENDER_API_KEY="your-api-key-here"' >> ~/.bashrc
-# or ~/.zshrc, ~/.profile, etc.
-source ~/.bashrc
-```
-
-## Usage
+## Available Commands
 
 ### Basic Commands
 ```bash
@@ -98,7 +45,7 @@ render services show <id>      # Show detailed service information
 render deployments <id>        # List deployments for a service
 ```
 
-### Examples
+## Examples
 
 1. **List all services:**
    ```bash
@@ -115,95 +62,35 @@ render deployments <id>        # List deployments for a service
    render deployments srv-cmgrmrta73kc73dsoo80
    ```
 
-## Files in This Repository
+## Notes
 
-- `render_cli.py` - Main Python script for Render API interaction
-- `render` - Wrapper script for easy command-line usage
-- `setup_render_cli.sh` - Setup script for Minis/iSH environment
-- `README.md` - This documentation file
-
-## Dependencies
-
-- Python 3.6+
-- `requests` library (install with `pip3 install requests`)
-
-## API Reference
-
-The CLI uses the official [Render API](https://api.render.com/v1):
-- Base URL: `https://api.render.com/v1`
-- Authentication: Bearer token (`RENDER_API_KEY`)
-- Endpoints: `/services`, `/services/{id}`, `/services/{id}/deploys`
+- The CLI uses the official Render API (https://api.render.com/v1)
+- All API calls require the `RENDER_API_KEY` environment variable
+- The CLI is designed specifically for the Minis/iSH environment (Alpine Linux on iOS)
+- The wrapper script (`render`) is installed to `/usr/local/bin/` for easy access
+- For more advanced operations, you can modify the Python script directly
 
 ## Troubleshooting
 
-### Common Issues
+If you encounter issues:
 
-1. **"RENDER_API_KEY is not set"**
+1. **Check API key:**
    ```bash
-   # Check if variable is set
-   echo $RENDER_API_KEY
-   
-   # Set it if not
-   export RENDER_API_KEY="your-key"
+   echo $RENDER_API_KEY | wc -c
    ```
 
-2. **"python3: command not found"**
+2. **Test API connectivity:**
    ```bash
-   # Install Python 3
-   # Ubuntu/Debian:
-   sudo apt install python3 python3-pip
-   
-   # macOS:
-   brew install python3
-   
-   # Alpine Linux:
-   apk add python3 py3-pip
+   curl -s -H "Authorization: Bearer $RENDER_API_KEY" "https://api.render.com/v1/services" | head -c 100
    ```
 
-3. **"ModuleNotFoundError: No module named 'requests'"**
+3. **Re-run setup script:**
    ```bash
-   pip3 install requests
+   sh setup_render_cli.sh
    ```
 
-4. **"Permission denied" when running `render`**
+4. **Check wrapper script installation:**
    ```bash
-   chmod +x render
+   which render
+   ls -la /usr/local/bin/render
    ```
-
-### Testing API Connectivity
-```bash
-# Test if API key works
-curl -s -H "Authorization: Bearer $RENDER_API_KEY" \
-  "https://api.render.com/v1/services" | head -c 100
-```
-
-## Development
-
-### Adding New Features
-1. Fork the repository
-2. Modify `render_cli.py` to add new functionality
-3. Test your changes
-4. Submit a pull request
-
-### Running Tests
-```bash
-# Basic functionality test
-python3 render_cli.py help
-
-# Test with mock API key (will fail but show error handling)
-RENDER_API_KEY="test" python3 render_cli.py services list
-```
-
-## License
-
-This project is open source and available for personal and commercial use.
-
-## Contributing
-
-Contributions are welcome! Please feel free to submit a Pull Request.
-
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Add tests if applicable
-5. Submit a pull request
